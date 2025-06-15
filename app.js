@@ -99,8 +99,8 @@ function sendReadInput() {
 }
 
 // Connect to inverter
-const client = net.createConnection({ host: '192.168.1.40', port: 8000 }, () => {
-    console.log('Connected to inverter at 192.168.1.40:8000');
+const client = net.createConnection({ host: '10.10.10.1', port: 8000 }, () => {
+    console.log('Connected to inverter at 10.10.10.1:8000');
     // initial read and start periodic polling
     sendReadInput();
     setInterval(sendReadInput, READ_INTERVAL);
