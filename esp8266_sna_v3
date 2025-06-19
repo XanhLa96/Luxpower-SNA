@@ -15,7 +15,7 @@ const char* otaPass = "admin"; // Password cho OTA
 // Cấu hình inverter
 const char* inverterHost = "10.10.10.1";
 const int inverterPort = 8000;
-const int defaultProtocol = 1; // Giao thức 1 hoặc 2
+const int defaultProtocol = 1; // Giao thức
 const int READ_INTERVAL = 5000; // 5 giây
 
 // Cấu hình bộ đệm log
@@ -57,6 +57,11 @@ const char html_template[] PROGMEM = "<!DOCTYPE html><html><head><title>Giám s�
                                      "<p><form action='/reset' method='POST'><button type='submit'>Khởi động lại ESP8266</button></form></p>"
                                      "<p><a href='/update'>Cập nhật Firmware OTA</a></p>"
                                      "<h3>Log</h3><pre>%s</pre></body></html>";
+
+// Function declarations
+void handleRoot();
+void handleReset();
+uint16_t getRegister2(uint8_t* buf, int index, int len);
 
 void setup() {
   Serial.begin(115200);
@@ -151,8 +156,7 @@ void addLog(const char* format, ...) {
 void connectToInverter() {
   if (client.connected()) client.stop();
   if (client.connect(inverterHost, inverterPort)) {
-    addLog("Kết nối đến inverter tại %s", inverterHost);
-    addLog("Port: %d", inverterPort);
+    addLog("Kết nối đến inverter tại %s:%d", inverterHost, inverterPort);
   } else {
     addLog("Kết nối inverter thất bại");
   }
@@ -185,7 +189,7 @@ void buildReadInputCommandBuffer(uint8_t* cmd, const uint8_t* serialBuffer, uint
   cmd[15] = (pointNumber >> 8) & 0xFF;
   uint16_t crc = crc16Modbus(cmd, 16);
   cmd[16] = crc & 0xFF; // CRC thấp
-  cmd[17] = (crc >> 8) & 0xFF; // CRC cao thấp
+  cmd[17] = (crc >> 8) & 0xFF; // CRC cao
 }
 
 // Xây dựng bộ đệm truyền dữ liệu
@@ -258,7 +262,7 @@ void handleFrame(uint8_t* frame, int len) {
   for (int i = 0; i < len; i++) {
     char byte[4];
     snprintf(byte, sizeof(byte), "%02X ", frame[i]);
-    strncat(hex, byte, sizeof(hex) - 1);
+    strncat(hex, byte, sizeof(hex) - strlen(hex) - 1);
   }
   addLog("Khung thô: %s", hex);
   
@@ -277,6 +281,7 @@ void handleFrame(uint8_t* frame, int len) {
 
     addLog("Công suất PV: %d W", lastPvFlow);
     addLog("Tiêu thụ: %d W", lastConsumption);
+  }
 }
 
 // Lấy giá trị thanh ghi (2 byte)
@@ -300,6 +305,7 @@ void handleRoot() {
   server.send(200, "text/html", html);
 }
 
+// Xử lý yêu cầu reset
 void handleReset() {
   server.send(200, "text/html", "<html><body>Đang khởi động lại...</body></html>");
   addLog("Khởi động lại qua web");
