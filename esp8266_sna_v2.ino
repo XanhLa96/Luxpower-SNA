@@ -4,8 +4,8 @@
 #include <time.h>
 
 // Thông tin WiFi
-const char* ssid = "VIETTEL"; // Thay bằng SSID của bạn
-const char* password = "11111111"; // Thay bằng mật khẩu WiFi
+const char* ssid = "yourwifi"; // Thay bằng SSID của bạn
+const char* password = "yourpaswifi"; // Thay bằng mật khẩu WiFi
 
 // Cấu hình inverter
 const char* inverterHost = "10.10.10.1";
@@ -27,9 +27,6 @@ WiFiClient client;
 // Số serial mặc định cho datalog và inverter
 const uint8_t DEFAULT_DATALOG_SN[10] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 const uint8_t EMPTY_INVERTER_SN[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-const uint8_t DATALOG_SN[10] = {0x0B, 0x0A, 0x03, 0x02, 0x05, 0x00, 0x05, 0x06, 0x09, 0x02};
-const uint8_t INVERTER_SN[10] = {0x04, 0x00, 0x04, 0x03, 0x06, 0x08, 0x00, 0x04, 0x09, 0x01};
 
 // Bộ đệm phân tích dữ liệu
 uint8_t parserBuffer[256];
